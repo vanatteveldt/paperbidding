@@ -28,8 +28,9 @@ class Bid(models.Model):
     author = models.ForeignKey(Author, null=False)
     paper = models.ForeignKey(Paper, null=False)
     score = models.IntegerField(null=False)
+    weight = models.FloatField(null=True)
     class Meta:
-        unique_together = ('author', 'paper', 'score')
+        unique_together = ('author', 'paper')
 
 from django.contrib import admin
 admin.site.register(Author)

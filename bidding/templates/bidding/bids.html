@@ -5,14 +5,18 @@
     <title>Title</title>
 </head>
 <body>
-<form>
-Paper bidding for {{ me.first_name }} {{ me.last_name }} ({{ me.email }})
+Paper bidding for <b>{{ me.first_name }} {{ me.last_name }} ({{ me.email }})</b>
 <p>
     The computational methods group assumes that all first author submitters will also participate in the review process, and review 3 abstracts and/or papers.
     In the table below you can select which papers you would prefer to review.
     We will try to assign papers that you have selected, but of course we might not be able to facilitate all requests
 </p>
+{% if msg %}
+<p><b>{{ msg }}</b></p>
+{% endif %}
 
+<form method="POST">{% csrf_token %}
+<input type="submit">
 <table border="1">
 <tr>
     <th>Yes</th>
@@ -23,14 +27,15 @@ Paper bidding for {{ me.first_name }} {{ me.last_name }} ({{ me.email }})
 </tr>
     {%  for paper in papers %}
       <tr>
-        <td><input type="radio" name="paper_{{ paper.id }}" value="no"></td>
-        <td><input type="radio" name="paper_{{ paper.id }}"  value="maybe" checked></td>
-        <td><input type="radio" name="paper_{{ paper.id }}" value="yes" ></td>
-        <td><input type="radio" name="paper_{{ paper.id }}" value="conflict"></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="1" {% if paper.score == 1 %}checked{% endif %}></td>
+        <td><input type="radio" name="paper_{{ paper.id }}"  value="0" {% if paper.score == 0 %}checked{% endif %}></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="-1" {% if paper.score == -1 %}checked{% endif %}></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="-99" {% if paper.score == -99 %}checked{% endif %}></td>
         <td>{{ paper.title }}</td>
       </tr>
     {% endfor %}
 </table>
+<input type="submit">
 
 </form>
 </body>

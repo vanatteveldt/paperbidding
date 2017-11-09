@@ -35,8 +35,9 @@ def index(request):
             pid = int(paper.split("_")[1])
             score = int(score)
             if pid in bids:
-                bids[pid].score = score
-                bids[pid].save()
+                if bids[pid].score != score:
+                    bids[pid].score = score
+                    bids[pid].save()
             elif score != 0:
                 bids[pid] = Bid.objects.create(paper_id=pid, author=me, score=score)
 
@@ -44,7 +45,6 @@ def index(request):
         nbids = len([b for pid,b in bids.items() if b.score > 0])
         if nbids < 5:
             msg += " Please bid 'yes' on at least 5 papers to ensure we can assign you papers that you are interested in!"
-
     for paper in papers:
         if paper.id in bids:
             paper.score = bids[paper.id].score
@@ -52,8 +52,6 @@ def index(request):
         else:
             paper.score = 0
             paper.weight=0
-
     papers.sort(key=lambda p:-p.weight)
-
     return render(request, 'bidding/bids.html', locals())
 

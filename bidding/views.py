@@ -23,7 +23,7 @@ def index(request):
     if code != get_hash(email):
         return HttpResponse('HTTP 401 Unauthorized: code does not match email', status=401)
 
-    me = Author.objects.get(last_name='Welbers')
+    me = Author.objects.get(email=request.GET['email'])
     papers = Paper.objects.all()
 
     papers = [p for p in papers if email not in p.author_emails]

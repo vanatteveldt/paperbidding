@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form>
+Paper bidding for {{ me.first_name }} {{ me.last_name }} ({{ me.email }})
+<p>
+    The computational methods group assumes that all first author submitters will also participate in the review process, and review 3 abstracts and/or papers.
+    In the table below you can select which papers you would prefer to review.
+    We will try to assign papers that you have selected, but of course we might not be able to facilitate all requests
+</p>
+
+<table border="1">
+<tr>
+    <th>Yes</th>
+    <th>Maybe</th>
+    <th>No</th>
+    <th>Conflict</th>
+    <th>Paper Title</th>
+</tr>
+    {%  for paper in papers %}
+      <tr>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="no"></td>
+        <td><input type="radio" name="paper_{{ paper.id }}"  value="maybe" checked></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="yes" ></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="conflict"></td>
+        <td>{{ paper.title }}</td>
+      </tr>
+    {% endfor %}
+</table>
+
+</form>
+</body>
+</html>

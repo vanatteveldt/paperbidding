@@ -1,28 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>ICA CM Paper Bidding</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, background-color=#000000">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+</head>
+
+<head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-Paper bidding for <b>{{ me.first_name }} {{ me.last_name }} ({{ me.email }})</b>
+<div class="container">
+    <h2>Paper bidding for <b>{{ me.first_name }} {{ me.last_name }} ({{ me.email }})</b></h2>
 <p>
     The computational methods group assumes that all first author submitters will also participate in the review process, and review 3 abstracts and/or papers.
     In the table below you can select which papers you would prefer to review.
-    We will try to assign papers that you have selected, but of course we might not be able to facilitate all requests
+    We will try to assign papers that you have selected, but of course we might not be able to facilitate all requests.
+
+    <p>Papers are sorted by similarity to your own submission(s), so hopefully the most relevant papers are near the top.
+    <p>Please use 'conflict' to mark papers which you can't review due to a conflict of interest.
 </p>
 {% if msg %}
 <p><b>{{ msg }}</b></p>
 {% endif %}
 
 <form method="POST">{% csrf_token %}
-<input type="submit">
-<table border="1">
+<input type="submit" class="btn btn-primary">
+
+<table class="table" style="margin-top:1em">
 <tr>
-    <th>Yes</th>
-    <th>Maybe</th>
-    <th>No</th>
-    <th>Conflict</th>
+    <th title="Yes">Yes</th>
+    <th title="Maybe">Maybe</th>
+    <th title="No">No</th>
+    <th title="Conflict">Conflict</th>
     <th>Paper Title</th>
 </tr>
     {%  for paper in papers %}
@@ -35,8 +50,10 @@ Paper bidding for <b>{{ me.first_name }} {{ me.last_name }} ({{ me.email }})</b>
       </tr>
     {% endfor %}
 </table>
-<input type="submit">
+<input type="submit" class="btn btn-primary">
 
 </form>
+</div>
 </body>
+
 </html>

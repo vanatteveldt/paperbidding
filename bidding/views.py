@@ -40,11 +40,12 @@ def index(request):
                     bids[pid].save()
             elif score != 0:
                 bids[pid] = Bid.objects.create(paper_id=pid, author=me, score=score)
-
+    nbids = len([b for pid,b in bids.items() if b.score > 0])
+    if request.POST:
         msg = "Thanks for indicating your reviewing preferences!"
         nbids = len([b for pid,b in bids.items() if b.score > 0])
-        if nbids < 5:
-            msg += " Please bid 'yes' on at least 5 papers to ensure we can assign you papers that you are interested in!"
+        if nbids < 10:
+            warn = " Please bid 'yes' on at least 10 papers to ensure we can assign you papers that you are interested in!"
     for paper in papers:
         if paper.id in bids:
             paper.score = bids[paper.id].score

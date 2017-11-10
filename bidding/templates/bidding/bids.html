@@ -28,12 +28,21 @@
     <p>Please use 'conflict' to mark papers which you can't review due to a conflict of interest.
 </p>
 {% if msg %}
-<p><b>{{ msg }}</b></p>
+    <div class="alert alert-success" role="alert">
+        <strong>{{ msg }}</strong>
+</div>
 {% endif %}
+{% if warn %}
+    <div class="alert alert-warning" role="alert">
+        <strong>{{ warn }}</strong>
+</div>
 
+{%  endif %}
 <form method="POST">{% csrf_token %}
 <input type="submit" class="btn btn-primary">
 
+{%  if nbids > 0 %}
+<h2>Your preferences:</h2>
 <table class="table" style="margin-top:1em">
 <tr>
     <th title="Yes">Yes</th>
@@ -43,6 +52,7 @@
     <th>Paper Title</th>
 </tr>
     {%  for paper in papers %}
+        {%  if paper.score != 0 %}
       <tr>
         <td><input type="radio" name="paper_{{ paper.id }}" value="1" {% if paper.score == 1 %}checked{% endif %}></td>
         <td><input type="radio" name="paper_{{ paper.id }}"  value="0" {% if paper.score == 0 %}checked{% endif %}></td>
@@ -50,6 +60,29 @@
         <td><input type="radio" name="paper_{{ paper.id }}" value="-99" {% if paper.score == -99 %}checked{% endif %}></td>
         <td>{{ paper.title }}</td>
       </tr>
+        {% endif %}
+    {% endfor %}
+</table>
+{%  endif %}
+<h2>Available papers:</h2>
+<table class="table" style="margin-top:1em">
+<tr>
+    <th title="Yes">Yes</th>
+    <th title="Maybe">Maybe</th>
+    <th title="No">No</th>
+    <th title="Conflict">Conflict</th>
+    <th>Paper Title</th>
+</tr>
+    {%  for paper in papers %}
+        {%  if paper.score == 0 %}
+      <tr>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="1" {% if paper.score == 1 %}checked{% endif %}></td>
+        <td><input type="radio" name="paper_{{ paper.id }}"  value="0" {% if paper.score == 0 %}checked{% endif %}></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="-1" {% if paper.score == -1 %}checked{% endif %}></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="-99" {% if paper.score == -99 %}checked{% endif %}></td>
+        <td>{{ paper.title }}</td>
+      </tr>
+        {%  endif %}
     {% endfor %}
 </table>
 <input type="submit" class="btn btn-primary">

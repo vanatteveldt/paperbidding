@@ -40,7 +40,10 @@ def index(request):
                     bids[pid].save()
             elif score != 0:
                 bids[pid] = Bid.objects.create(paper_id=pid, author=me, score=score)
-    nbids = len([b for pid,b in bids.items() if b.score > 0])
+    nbids = len([b for pid, b in bids.items() if b.score > 0])
+    has_bids = any(b.score != 0 for pid, b in bids.items())
+    print(has_bids)
+
     if request.POST:
         msg = "Thanks for indicating your reviewing preferences!"
         nbids = len([b for pid,b in bids.items() if b.score > 0])
@@ -58,6 +61,13 @@ def index(request):
         if paper.weight is None:
             paper.weight = 0
 
+
     papers.sort(key=lambda p:-p.weight)
+
+    for paper in papers:
+        if 'topicminer' in paper.title.lower():
+            print(paper.title, paper.score)
+
+
     return render(request, 'bidding/bids.html', locals())
 

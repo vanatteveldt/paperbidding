@@ -66,4 +66,4 @@ for author in Author.objects.filter(submitter=False):#.filter(email='m.wettstein
     code = get_hash(author.email)
     url = 'http://bid.ica-cm.org/?email={author.email}&code={code}'.format(**locals())
     print(author.email, url)
-    #send_mail(author.email, author.first_name, url)
+    send_mail(author.email, author.first_name, url)

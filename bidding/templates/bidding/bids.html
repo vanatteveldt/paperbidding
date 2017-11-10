@@ -41,7 +41,7 @@
 <form method="POST">{% csrf_token %}
 <input type="submit" class="btn btn-primary">
 
-{%  if nbids > 0 %}
+{%  if has_bids %}
 <h2>Your preferences:</h2>
 <table class="table" style="margin-top:1em">
 <tr>

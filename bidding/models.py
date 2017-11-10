@@ -8,6 +8,7 @@ class Author(models.Model):
     middle_name = models.CharField(blank=False, null=True, max_length=255)
     last_name = models.CharField(blank=False, null=False, max_length=255)
     affiliation = models.CharField(blank=False, null=False, max_length=255)
+    submitter = models.BooleanField(default=True)
     bids = models.ManyToManyField('Paper', through='Bid')
 
     def __str__(self):

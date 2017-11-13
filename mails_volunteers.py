@@ -14,7 +14,7 @@ from bidding.models import Author, Paper
 #    print(author.email, )
 
 
-def send_mail(email, name, url):
+def send_mail(email, name, url, pwd):
     msg = """
 Dear {name},
     
@@ -46,7 +46,7 @@ PS: This is the first time we're doing this and we had to write the paper biddin
     smtpserver.ehlo()
     smtpserver.starttls()
     smtpserver.ehlo()
-    smtpserver.login('vanatteveldt@gmail.com', 'zbevmbhetjlxafhs')
+    smtpserver.login('vanatteveldt@gmail.com', pwd)
 
     fromaddr = 'wouter@vanatteveldt.com'
     sub = '[urgent] ICA-CM Paper bidding'
@@ -59,6 +59,7 @@ PS: This is the first time we're doing this and we had to write the paper biddin
     smtpserver.sendmail(fromaddr, email, msg.as_string())
 
 #sent = {line.split()[0] for line in open('sent.txt')}
+pwd = sys.argv[1]
 
 for author in Author.objects.filter(submitter=False):#.filter(email='m.wettstein@ipmz.uzh.ch'):
  #   if author.email in sent:
@@ -66,4 +67,4 @@ for author in Author.objects.filter(submitter=False):#.filter(email='m.wettstein
     code = get_hash(author.email)
     url = 'http://bid.ica-cm.org/?email={author.email}&code={code}'.format(**locals())
     print(author.email, url)
-    send_mail(author.email, author.first_name, url)
+    send_mail(author.email, author.first_name, url, pwd)

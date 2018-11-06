@@ -52,7 +52,7 @@
     <th>Paper Title</th>
 </tr>
     {%  for paper in papers %}
-        {%  if paper.score != 0 %}
+        {%  if paper.score != -1 %}
       <tr>
         <td><input type="radio" name="paper_{{ paper.id }}" value="1" {% if paper.score == 1 %}checked{% endif %}></td>
         <td><input type="radio" name="paper_{{ paper.id }}"  value="0" {% if paper.score == 0 %}checked{% endif %}></td>
@@ -74,7 +74,7 @@
     <th>Paper Title</th>
 </tr>
     {%  for paper in papers %}
-        {%  if paper.score == 0 %}
+        {%  if paper.score == -1 %}
       <tr>
         <td><input type="radio" name="paper_{{ paper.id }}" value="1" {% if paper.score == 1 %}checked{% endif %}></td>
         <td><input type="radio" name="paper_{{ paper.id }}"  value="0" {% if paper.score == 0 %}checked{% endif %}></td>

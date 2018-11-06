@@ -24,10 +24,9 @@ def index(request):
         return HttpResponse('HTTP 401 Unauthorized: code does not match email', status=401)
 
     me = Author.objects.get(email=request.GET['email'])
-    papers = list(Paper.objects.all())
+    my_papers = me.authorship_set.all().values_list("paper__pk", flat=True)
+    papers = list(Paper.objects.exclude(pk__in=my_papers))
 
-    # TODO need to check authorships!!!
-    # papers = [p for p in papers if email not in p.author_emails]
     bids = {bid.paper_id: bid for bid in me.bid_set.all()}
 
     if request.POST:
@@ -64,10 +63,6 @@ def index(request):
 
 
     papers.sort(key=lambda p:-p.weight)
-
-    for paper in papers:
-        if 'topicminer' in paper.title.lower():
-            print(paper.title, paper.score)
 
 
     return render(request, 'bidding/bids.html', locals())

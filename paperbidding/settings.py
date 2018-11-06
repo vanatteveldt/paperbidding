@@ -25,7 +25,7 @@ SECRET_KEY = 'wgaes-=_e8mtnco+$(m6dyvc-^#w_qu-y+b=5dv*uou@2lytr5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["bid.ica-cm.org"]
+ALLOWED_HOSTS = ["bid.ica-cm.org", "localhost"]
 
 
 # Application definition

@@ -52,10 +52,23 @@ for paper in Paper.objects.all():
     for a in paper.authorship_set.all():
         add_reference(a.author.email, paper.title, paper.abstract)
 
+# read keywords for first time submitters
+for line in csv.DictReader(open("data/2019_volunteers_keywords.csv")):
+    id = line['PERSON (ID)']
+    keywords = line['PERSON DETAIL: Keywords']
+    try:
+        email = Author.objects.get(scholar_id=id).email
+    except Author.DoesNotExist:
+        continue
+    add_reference(email, keywords)
+
 print("Loading word vectors")
 sim = Similarity()
 print("Computing matches")
+
 for reviewer in Author.objects.filter(Q(volunteer=True) | Q(first_author=True)):
+    if Bid.objects.filter(author=reviewer).exists():
+        continue
     print(reviewer)
     email = reviewer.email
     if email in reference:
@@ -63,6 +76,7 @@ for reviewer in Author.objects.filter(Q(volunteer=True) | Q(first_author=True)):
     else:
         name = _name(reviewer.first_name, reviewer.last_name)
         if name not in alias:
+            print("no match :-(")
             # cannot do matching :-(
             continue
         reftext = reference[alias[name]]
@@ -70,7 +84,7 @@ for reviewer in Author.objects.filter(Q(volunteer=True) | Q(first_author=True)):
     for paper in Paper.objects.all():
         text = "\n\n".join([paper.title, paper.abstract])
         s = sim.similarity(text, reftext)
-        Bid.objects.create(paper=paper, author=reviewer, score=1, weight=s)
+        Bid.objects.create(paper=paper, author=reviewer, score=-1, weight=s)
 
 
     #print(reviewer, reviewer.email in reference)

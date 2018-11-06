@@ -24,9 +24,10 @@ def index(request):
         return HttpResponse('HTTP 401 Unauthorized: code does not match email', status=401)
 
     me = Author.objects.get(email=request.GET['email'])
-    papers = Paper.objects.all()
+    papers = list(Paper.objects.all())
 
-    papers = [p for p in papers if email not in p.author_emails]
+    # TODO need to check authorships!!!
+    # papers = [p for p in papers if email not in p.author_emails]
     bids = {bid.paper_id: bid for bid in me.bid_set.all()}
 
     if request.POST:

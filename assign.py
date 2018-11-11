@@ -1,55 +1,47 @@
-# assign papers based on bids
-# constraints: all papers 3 reviewers, papers spread evenly over reviewers
-# optimize: give people the paper they want
-# naive attempt: pick paper with lowest # of bids, assign to reviewers with lowest # of bids
-import csv
-
-import sys
-
+import os;
 from collections import defaultdict
-
+os.environ["DJANGO_SETTINGS_MODULE"] = "paperbidding.settings"
 import django; django.setup()
-from bidding.models import Paper, Author
+from bidding.models import Bid, Paper
+import csv, sys
+all_bids = defaultdict(set)
 
-c, reviewers, papers, solution = defaultdict(set), defaultdict(set), defaultdict(set), defaultdict(set)
+papertypes = {} # paper_id: type
+for line in csv.DictReader(open("2019_abstracts2.csv")):
+    papertypes[int(line['\ufeffControl ID'])] = line['Presentation Type'].split()[-1]
 
-for row in csv.DictReader(sys.stdin):
-    if row['score'] == "1":
-        r, p = row['email'], row['paper']
-        reviewers[r].add(p)
-        papers[p].add(r)
-        c[r].add(p)
+for b in Bid.objects.exclude(score=-1).exclude(score=-99).select_related("author", "paper").defer("paper__abstract"):
+    if "shen@ucd" in b.author.email:
+        continue
+    b.paper.ptype = papertypes[b.paper_id]
+    all_bids[b.paper].add(b)
 
-def argmin(x, func):
-    result, value = None, None
-    for e in x:
-        v = func(e)
-        if value is None or v < value:
-            result, value = e, v
-    return result
+assert len(all_bids) == Paper.objects.count()
 
-def weight(r):
-    return len(reviewers[r]) + (100 if len(solution[r]) == 2 else 0)
-
-while papers:
-    p = argmin(papers, lambda p: len(papers[p]))
-    candidates = papers[p] - {r for (r,p) in solution.items() if len(p) >= 3}
-    for r in [1,2,3]:
-        if not candidates:
-            raise Exception("NO CANDIDATES FOR {p}".format(**locals()))
-            break
-        r = argmin(candidates, weight)
-        candidates.remove(r)
-        reviewers[r].remove(p)
-        solution[r].add(p)
-    del papers[p]
-
+solution = defaultdict(set) # author: bid
+fullpapers = defaultdict(int) # author: n_full_papers
 w = csv.writer(sys.stdout)
-w.writerow(["email", "first_name", "last_name", "paper", "title", "reviewer"])
+w.writerow(["paper_id", "type", "title", "author_id", "email", "name", "score", "weight"])
 
-for r, papers in solution.items():
-    a = Author.objects.get(email=r)
-    for p in papers:
-        p = Paper.objects.get(pk=p)
-        w.writerow([a.email, a.last_name, a.first_name, p.id, p.title,r])
-    #print(len(p), r, p, c[r], all(x in c[r] for x in p))
+# hack: give these people extra papers, they deserve it :)
+boost = {} # email : boostpoints
+
+for paper, bids in sorted(all_bids.items(), key=lambda pa: len(pa[1])):
+    bids = [b for b in bids if len(solution[b.author]) < 3]
+    bids = sorted(bids, key=lambda b: (-boost.get(b.author.email, 0), -b.score, fullpapers.get(b.author, 0)*.5 + len(solution[b.author]), -b.weight if b.weight else 0))
+    if len(bids) < 3:
+        raise Exception("Fewer than 3 reviewers left for paper!")
+    for b in bids[:3]:
+        if boost.get(b.author.email, 0) > 0:
+            boost[b.author.email] -= 1
+        if b.paper.ptype == "Paper":
+            fullpapers[b.author] = fullpapers.get(b.author, 0) + 1
+        solution[b.author].add(b)
+        n = ", ".join([b.author.last_name, b.author.first_name])
+        w.writerow([b.paper.id, b.paper.ptype, b.paper.title, b.author.scholar_id, b.author.email, n, b.score, b.weight])
+
+#for a, bids in solution.items():
+#    if len(bids) != 2:
+#        print(a, len(bids))
+##    if fullpapers[a] > 2:
+#        print(a)

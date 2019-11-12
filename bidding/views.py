@@ -62,8 +62,7 @@ def index(request):
             paper.weight = 0
 
 
-    papers.sort(key=lambda p:-p.weight)
-
+    papers.sort(key=lambda p:(-p.score, -p.weight))
 
     return render(request, 'bidding/bids.html', locals())
 

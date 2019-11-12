@@ -33,34 +33,38 @@ def add_reference(email, *texts):
     email = email.lower().strip()
     reference[email] = "\n\n".join([reference[email]] + list(texts) )
 
+keywords = {} # id : keywords
 
-# read 2018 abstracts (for reference)
-for line in csv.DictReader(open("data/2018_abstracts.csv")):
+for line in csv.DictReader(open('data/2019_abstracts2.csv')):
+    id = int(line['\ufeffControl ID'])
     title = line['Title']
-    abstract = line['Abstract']
-    authors = line['Authors'].split(";")
-    emails = line['Author Emails'].split(",")
-    for email, name in zip(emails, authors):
-        add_reference(email, title, abstract)
-        # add name: email for matching unknowns
-        name = name.split(",")[0].strip()
-        fn = name.split(" ")[0]
-        ln = name.split(" ")[-1]
-        alias[_name(fn, ln)] = email
+    kws = line['Keywords'].strip()
+    kwset = set()
+    if kws != "none":
+        for kw in kws.split(";"):
+            if kw.strip():
+                k = kw.replace("- Computational Methods", "").strip()
+                if k not in kwset:
+                    kwset.add(k)
+    keywords[id] = kwset
+
+for line in csv.DictReader(open('data/2019_all_submissions.csv')):
+    id = int(line['\ufeffCONTROL ID'])
+
+    if id not in keywords:
+        continue # let's ignore submissions outside CM
+
+    abstract = line['ABSTRACT BODY']
+    title = line['TITLE']
+    email = line['AUTHORS (ADDRESS & EMAIL) (E-mail)']
+    add_reference(email, title, abstract, *keywords[id])
 
 for paper in Paper.objects.all():
     for a in paper.authorship_set.all():
-        add_reference(a.author.email, paper.title, paper.abstract)
+        add_reference(a.author.email, paper.title, paper.abstract, *paper.keywords.split("|"))
 
-# read keywords for first time submitters
-for line in csv.DictReader(open("data/2019_volunteers_keywords.csv")):
-    id = line['PERSON (ID)']
-    keywords = line['PERSON DETAIL: Keywords']
-    try:
-        email = Author.objects.get(scholar_id=id).email
-    except Author.DoesNotExist:
-        continue
-    add_reference(email, keywords)
+for a in Author.objects.all():
+    add_reference(a.email, *a.keywords.split("|"))
 
 print("Loading word vectors")
 sim = Similarity()

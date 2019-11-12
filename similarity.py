@@ -5,7 +5,7 @@ import numpy as np
 from scipy import spatial
 from stopwords import ENGLISH_STOP_WORDS
 
-VECTORS = "GoogleNews-vectors-negative300.bin"
+#VECTORS = "data/GoogleNews-vectors-negative300.bin"
 VECTORS = "data/GoogleNews-vectors-negative300-SLIM.bin"
 
 class Similarity:

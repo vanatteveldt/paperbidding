@@ -5,6 +5,8 @@ class Author(models.Model):
     email = models.CharField(blank=False, null=False, max_length=255, unique=True)
     first_name = models.CharField(blank=False, null=False, max_length=255)
     last_name = models.CharField(blank=False, null=False, max_length=255)
+    affiliation = models.CharField(blank=False, null=False, max_length=255)
+    keywords = models.TextField()
     submitter = models.BooleanField(default=False)
     first_author = models.BooleanField(default=False)
     volunteer = models.BooleanField(default=False)
@@ -17,7 +19,10 @@ class Author(models.Model):
 class Paper(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(blank=False, null=False, max_length=255)
-    abstract = models.TextField(blank=False, null=False)
+    abstract = models.TextField()
+    type = models.CharField(max_length=255)
+    student = models.CharField(max_length=255)
+    keywords = models.TextField()
 
     def __str__(self):
         return "<{id}: {title!r}>".format(**self.__dict__)

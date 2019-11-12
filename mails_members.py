@@ -1,3 +1,13 @@
+import os
+
+from django.db.models import Q
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "paperbidding.settings"
+import django
+
+django.setup()
+
+
 import csv, sys
 import smtplib
 
@@ -20,18 +30,14 @@ Dear {name},
 
 First of all, thanks for being part of the Computational Methods interest group.
 
-As you might know, we are experimenting with some changes to the review process.
-This means that all submitters are expected to review as well, and reviewers can
-choose which papers to review themselves in a process known as 'paper bidding'.
+You are receiving this email because you volunteered to review for the 
+Computational Methods group, or you submitted as first author to us, in which case we expect 
+you to review as well.
 
-Although if our administration is correct you did not submit to CM this year 
-(or not as first author), you are of course more than welcome to participate 
-in the review process.
+As a reviewer, you can indicate which papers to review themselves in a process known as 'paper bidding'.
 
-We only just got the list of member emails, so unfortunately the time table is 
-really tight: we will need your bid by tomorrow night.  Of course, we totally 
-understand if this does not work for you, and you are in no way obliged to 
-participate, but if you see one or two interesting papers feel free to select them!
+We only just got the list of submissions, so unfortunately the time table is 
+really tight: we will need your bid by Friday night (!). 
 
 To do the paper bidding, please visit the link below:
 
@@ -48,8 +54,7 @@ Happy bidding!
 Cindy Shen (vice-chair) 
 Wouter van Atteveldt (chair)
 
-PS This is the first time we're doing this and we had to write the paper bidding site
-ourself, so please mail us if you spot any bugs or have other feedback!
+PS As always, please mail us if you spot any bugs or have other feedback!
 """.format(**locals())
     #email = 'vanatteveldt@gmail.com'
     smtpserver = smtplib.SMTP("smtp.gmail.com", 587)
@@ -68,12 +73,14 @@ ourself, so please mail us if you spot any bugs or have other feedback!
 
     smtpserver.sendmail(fromaddr, email, msg.as_string())
 
-sent = {line.split()[0] for line in open('sent.txt')} | {"lorraine.borghetti@gmail.com"}
+sent = {}#{line.split()[0] for line in open('sent.txt')} | {"lorraine.borghetti@gmail.com"}
 pwd = sys.argv[1]
 
-for author in Author.objects.filter(submitter=False, volunteer=False):
+for author in Author.objects.filter(Q(first_author=True) | Q(volunteer=True)):
     code = get_hash(author.email)
+    if author.email != "wouter@vanatteveldt.com":
+        continue
     if author.email not in sent:
         url = 'http://bid.ica-cm.org/?email={author.email}&code={code}'.format(**locals())
         print(author.email, url)
-        send_mail(author.email, author.first_name, url, pwd)
+        #send_mail(author.email, author.first_name, url, pwd)

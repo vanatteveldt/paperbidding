@@ -21,11 +21,12 @@
     The computational methods group assumes that all first author submitters will also participate in the review process, and review at most 3 abstracts and/or papers.
     In the table below you can select which papers you would prefer to review.
     <b>Please select at least 10 papers to review so we can be sure to assign interesting papers to you</b>.
-    We will try to assign papers that you have selected, but of course we might not be able to facilitate all requests.
+    By default all options are 'Maybe'. You can mark submissions you would like to review with 'Yes', and articles you really don't care about with 'No'.
+    We will try to assign submissions that you have chosen with 'Yes', but of course we might not be able to facilitate all requests.
 </p>
 
     {%  if me.submitter %}<p>Papers are sorted by similarity to your own submission(s), so hopefully the most relevant papers are near the top. {% endif %}
-    <p>Please use 'conflict' to mark papers which you can't review due to a conflict of interest.
+    <p> Please use 'conflict' to mark papers which you can't review due to a conflict of interest.
 </p>
 {% if msg %}
     <div class="alert alert-success" role="alert">
@@ -52,10 +53,10 @@
     <th>Paper Title</th>
 </tr>
     {%  for paper in papers %}
-        {%  if paper.score != -1 %}
+        {%  if paper.score != 0 %}
       <tr>
         <td><input type="radio" name="paper_{{ paper.id }}" value="1" {% if paper.score == 1 %}checked{% endif %}></td>
-        <td><input type="radio" name="paper_{{ paper.id }}"  value="0" {% if paper.score == 0 %}checked{% endif %}></td>
+        <td><input type="radio" name="paper_{{ paper.id }}" value="0" {% if paper.score == 0 %}checked{% endif %}></td>
         <td><input type="radio" name="paper_{{ paper.id }}" value="-1" {% if paper.score == -1 %}checked{% endif %}></td>
         <td><input type="radio" name="paper_{{ paper.id }}" value="-99" {% if paper.score == -99 %}checked{% endif %}></td>
         <td>{{ paper.title }}</td>
@@ -74,7 +75,7 @@
     <th>Paper Title</th>
 </tr>
     {%  for paper in papers %}
-        {%  if paper.score == -1 %}
+        {%  if paper.score == 0 %}
       <tr>
         <td><input type="radio" name="paper_{{ paper.id }}" value="1" {% if paper.score == 1 %}checked{% endif %}></td>
         <td><input type="radio" name="paper_{{ paper.id }}"  value="0" {% if paper.score == 0 %}checked{% endif %}></td>

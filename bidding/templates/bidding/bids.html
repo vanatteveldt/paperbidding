@@ -24,9 +24,12 @@
     By default all options are 'Maybe'. You can mark submissions you would like to review with 'Yes', and articles you really don't care about with 'No'.
     We will try to assign submissions that you have chosen with 'Yes', but of course we might not be able to facilitate all requests.
 </p>
+    <p>Please use 'conflict' to mark papers which you can't review due to a conflict of interest.</p>
 
-    {%  if me.submitter %}<p>Papers are sorted by similarity to your own submission(s), so hopefully the most relevant papers are near the top. {% endif %}
-    <p> Please use 'conflict' to mark papers which you can't review due to a conflict of interest.
+    <p>Papers are sorted by similarity to your own submission(s), so hopefully the most relevant papers are near the top. 
+  (To be precise, we did a cosine similarity between the average word2vec representation of the abstract and the papers you submitted this year and last).
+
+
 </p>
 {% if msg %}
     <div class="alert alert-success" role="alert">

@@ -34,6 +34,12 @@ Note: 20XX refers to the ICA year (so 2021 is for ICA 2021, i.e. unit planning i
 - `data/20xx_cm_abstracts.csv`: all abstracts submitted to CM this year (can be requested from ICA, download from web site does not include all authors)
 - `data/20zz_all_abstracts.csv`: file with older abstracts to all divisions to do the matching (last year can be requested from ICA, olders years are in shared google drive)
 
+You will also need the word embeddings file, which can be downloaded using:
+
+```
+wget -qO- "https://github.com/eyaler/word2vec-slim/blob/master/GoogleNews-vectors-negative300-SLIM.bin.gz?raw=true" | gunzip > data/GoogleNews-vectors-negative300-SLIM.bin
+```
+
 ## Import the data 
 
 Call the `import_data` script with the paths to the data files:

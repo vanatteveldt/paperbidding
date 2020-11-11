@@ -56,5 +56,43 @@ $ env/bin/python import_data.py data/2021_cm_abstracts.csv data/2021_cm_voluntee
 ** Imported 86 new papers (238 in total) and created 130 new authors that did not volunteer
 ```
 
-Note: Column names seem to vary from year to year, so it's possible you need to edit this file to change the column names
+Note: This automatically skips any author or paper already in the system, so you can call it again if it e.g. skipped one reviewer or gave an error message
 
+Also note: Column names seem to vary from year to year, so it's possible you need to edit this file to change the column names
+
+# Match reviewers to papers
+
+Use the `match.py` to match the imported reviewers to the outstanding abstracts. 
+
+```
+$ env/bin/python match.py data/2020_all_abstracts.csv 
+** Loading reference texts
+*** Added 6321 reference texts from data/2020_all_abstracts.csv
+*** Added 238 reference texts from this year's papers
+*** Added 0 reference texts from volunteer keywords
+** Loading word vectors from data/GoogleNews-vectors-negative300-SLIM.bin
+*** Loaded 299567 word vectors with dimensionality 300
+** Computing matches
+*** Assigned similarity scores for 154 reviewers (skipped 0 reviewers)
+```
+
+Note: This automatically skips any reviewer already assigned scores, so you can call it again if it e.g. skipped one reviewer or gave an error message
+
+# Check webpage and send emails
+
+To run the website locally, use:
+
+```
+$ env/bin/python manage.py runserver
+```
+
+To log in, you need to generate credentials. You can do that with the `send_emails.py` script:
+
+```
+$ env/bin/python send_invitations.py --email wouter@vanatteveldt.com
+Dear Wouter,
+[...]To do the paper bidding, please visit the link below:
+http://bid.ica-cm.org/?email=wouter@vanatteveldt.com&code=f1db86d9facfe43fce9419f734555c6ee6e303f4
+```
+
+To test locally, go to http://localhost:8000/?email= etc. 

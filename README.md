@@ -86,13 +86,45 @@ To run the website locally, use:
 $ env/bin/python manage.py runserver
 ```
 
-To log in, you need to generate credentials. You can do that with the `send_emails.py` script:
+To log in, you need to generate credentials. You can do that with the `send_emails.py` script, which you can use to generate the email to yourself:
 
 ```
 $ env/bin/python send_invitations.py --email wouter@vanatteveldt.com
 Dear Wouter,
 [...]To do the paper bidding, please visit the link below:
-http://bid.ica-cm.org/?email=wouter@vanatteveldt.com&code=f1db86d9facfe43fce9419f734555c6ee6e303f4
+http://bid.ica-cm.org/?email=wouter@vanatteveldt.com&code=xxx
 ```
 
 To test locally, go to http://localhost:8000/?email= etc. 
+
+## Moving to production
+
+To move to production, copy the database file `data/db.sqlite3` to the production server and run it there. Don't forget to commit, push, and pull any changes you made to the code or templates.
+
+Note: we now macgyver that by running runserver in a screen on the amcat server on `/home/wva/paperbidding`, would probably be better to do it properly. "Next year", right? 
+
+## Send a test email
+
+As a final test, generate a gmail 'app' password and use it to send an email to yourself:
+
+```
+$ env/bin/python send_invitations.py --email wouter@vanatteveldt.com --password yourgmailpassword
+```
+
+## Mail the members
+
+If you are happy with the site and invitation email, send it off to all members:
+
+```
+$ env/bin/python send_invitations.py --password yourgmailpassword
+```
+
+Note that there's a good chance it will stop after 100 or so emails due to rate limitations. In that case, store those emails in a file "sent.txt", wait 15 minutes, and call the script again with that ignore list:
+
+```
+$ env/bin/python send_invitations.py --password yourgmailpassword --ignore sent.txt
+```
+
+# Assign reviewers
+
+(to come)

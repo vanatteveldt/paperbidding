@@ -1,0 +1,29 @@
+Dear {name},
+
+First of all, thanks for being part of the Computational Methods division
+
+You are receiving this email because you volunteered to review for the
+Computational Methods group, or you submitted as first author to us, in which case we expect
+you to review as well.
+
+As a reviewer, you can indicate which papers to review themselves in a process known as 'paper bidding'.
+
+We only just got the list of submissions, so unfortunately the time table is
+really tight: we will need your bid by Friday night (!).
+
+To do the paper bidding, please visit the link below:
+
+{url}
+
+We will assign all papers for review by November 15th. All reviews should be due
+by December 1st.
+
+As always, this is a tight schedule, but since we will only be assigning a small
+amount of papers/abstracts we are confident that it should not be too much of a burden.
+
+Happy bidding!
+
+Annie Waldherr (vice-chair)
+Cindy Shen (chair)
+
+PS As always, please mail us if you spot any bugs or have other feedback!

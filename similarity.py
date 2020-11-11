@@ -3,19 +3,25 @@
 import gensim
 import numpy as np
 from scipy import spatial
+from unidecode import unidecode
+
 from stopwords import ENGLISH_STOP_WORDS
 
-#VECTORS = "data/GoogleNews-vectors-negative300.bin"
 VECTORS = "data/GoogleNews-vectors-negative300-SLIM.bin"
 
-class Similarity:
 
+class Similarity:
     def __init__(self, model_file=VECTORS):
-        #print("Loading word2vec model from ", model_file)
         self.model = gensim.models.KeyedVectors.load_word2vec_format(VECTORS, binary=True)
         self.index2word_set = set(self.model.wv.index2word)
-        self.num_features = 300  # why is this a parameter?
 
+    @property
+    def num_features(self):
+        return self.model.wv.vectors.shape[1]
+
+    @property
+    def num_words(self):
+        return self.model.wv.vectors.shape[0]
 
     def avg_feature_vector(self, sentence):
         words = sentence.split()
@@ -29,7 +35,7 @@ class Similarity:
             if word in self.index2word_set:
                 n_words += 1
                 feature_vec = np.add(feature_vec, self.model[word])
-        if (n_words > 0):
+        if n_words > 0:
             feature_vec = np.divide(feature_vec, n_words)
         return feature_vec
 
@@ -39,4 +45,11 @@ class Similarity:
         return 1 - spatial.distance.cosine(av, bv)
 
 
+def clean(x):
+    return unidecode(x.lower().strip())
 
+
+def _name(fn, ln):
+    fn = clean(fn.split(" ")[0])
+    ln = clean(ln.split(" ")[-1])
+    return ", ".join([ln, fn])

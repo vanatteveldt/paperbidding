@@ -16,6 +16,7 @@ def get_hash(email):
 
 
 def index(request):
+    #return render(request, 'bidding/closed.html', locals())
     if not ('email' in request.GET and 'code' in request.GET):
         return HttpResponse('HTTP 401 Unauthorized: please provide email and code in GET parameters', status=401)
     email = request.GET['email']

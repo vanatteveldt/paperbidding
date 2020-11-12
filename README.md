@@ -31,8 +31,11 @@ Add the three required files to the `data` folder: (the names don't matter, but 
 Note: 20XX refers to the ICA year (so 2021 is for ICA 2021, i.e. unit planning in 2020), however this was not done consistently in the past.
 
 - `data/20xx_cm_volunteers.csv`: all people who volunteered to review (can be downloaded from the ICA submission web site as unit planner)
-- `data/20xx_cm_abstracts.csv`: all abstracts submitted to CM this year (can be requested from ICA, download from web site does not include all authors)
+- `data/20xx_cm_abstracts.csv`: abstracts submitted to CM this year *with all authors* (can be requested from ICA)
+- `data/2021_cm_abstracts_website.csv` : all abstracts submitted to CM this year *with type and keywords* (can be downloaded as unit planner)
 - `data/20zz_all_abstracts.csv`: file with older abstracts to all divisions to do the matching (last year can be requested from ICA, olders years are in shared google drive)
+
+Note that it's a bit annoying that half the info is in the abstracts emailed from ICA and the other half in the abstracts we can download ourselves, so hopefully this can be sorted at some point. 
 
 You will also need the word embeddings file, which can be downloaded using:
 
@@ -124,6 +127,34 @@ Note that there's a good chance it will stop after 100 or so emails due to rate 
 ```
 $ env/bin/python send_invitations.py --password yourgmailpassword --ignore sent.txt
 ```
+
+# Check progress and send reminders
+
+To check progress, I generally copy the `data/db.sqlite3` file back from the production server to my personal computer and work locally.
+That way, if I screw up at least the site is still up and the data is still there. 
+Note that sqlite files can be corrupted if copied while someone is writing, but that should be relatively rare so in that case just copy again.
+I'm sure there is also an elegant solution. For next year. 
+
+Now, run the `mail_reminders.py` script with `--check`:
+
+```
+$ env/bin/python send_reminder.py --check
+** Bids received from 105 reviewers
+** 50 reviewers still need to bid
+[... list of emails and links for people that didn't submit bids yet ...]
+```
+
+If you want to remind the laggards, make sure to update the reminder email template ([email_reminder.txt](email_reminder.txt)) and run the same script with the email password:
+
+```
+$ env/bin/python send_reminder.py --password yourgmailpassword
+** Bids received from 105 reviewers
+** 50 reviewers still need to bid
+** Sending reminder emails...
+[... list of emails that are being sent ...]
+```
+
+If you get an error message halfway through, you can copy the list of successful mails to a file and use it with `--ignore` as above
 
 # Assign reviewers
 

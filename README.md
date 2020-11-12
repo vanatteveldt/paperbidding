@@ -158,4 +158,17 @@ If you get an error message halfway through, you can copy the list of successful
 
 # Assign reviewers
 
-(to come)
+When the bidding is done, you can use the `assign.py` script to automatically assign papers to authors:
+
+```
+$ env/bin/python assign.py > assignments.csv
+```
+
+You can check this file and e.g. list how many papers per person to see if it seems mostly fair. 
+
+After this, you need to assign the reviews in the ICA system. They promised it's possible automatically, otherwise it's a lot of clicking...
+
+The assignment uses a greedy algorithm that (IIUC) goes through all papers, starting with the one with the least bids on it. Then it sorts the bidders for that paper starting with the people that have the least assignments so far, where full papers count more than abstracts (in case of ties it favours the best match according to the matching step). Then, it simply assigns the first three reviewers and goes to the next paper.
+
+It will give an error message if any paper had less than three bids. For now it ignores 'no' and 'conflict', but since we have always been able to assign papers to 'yes' bidders, that doesn't seem to be a problem.  
+

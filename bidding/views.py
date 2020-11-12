@@ -57,7 +57,7 @@ def index(request):
             paper.weight = bids[paper.id].weight
         else:
             paper.score = 0
-            paper.weight=0
+            paper.weight = 0
 
         if paper.weight is None:
             paper.weight = 0

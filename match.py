@@ -1,3 +1,14 @@
+"""
+Match reviewers with papers. Run import_data first.
+
+Gets the reviewers and this year's abstracts from the database and the earlier abstracts from a csv file.
+Will compute a 'reference text' per reviewer and compute cosine similarity of embedding vectors between
+each abstract and the reference text per reviewer, saving it to the Bid object.
+"""
+
+# TODO: Add keywords of this year's submission to abstract text and reference text
+
+
 import argparse
 import os
 import sys
@@ -80,7 +91,7 @@ for reviewer in Author.objects.filter(Q(volunteer=True) | Q(first_author=True)):
     for paper in Paper.objects.all():
         text = "\n\n".join([paper.title, paper.abstract])
         s = sim.similarity(text, "\n\n".join(reftexts))
-        Bid.objects.create(paper=paper, author=reviewer, score=-1, weight=s)
+        Bid.objects.create(paper=paper, author=reviewer, score=0, weight=s)
     n += 1
 print(f"*** Assigned similarity scores for {n} reviewers (skipped {n_unknown} reviewers)")
 

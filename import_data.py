@@ -1,3 +1,7 @@
+"""
+Import this year's data from the various CSV files. Run this right after creating the database.
+"""
+
 import os
 os.environ["DJANGO_SETTINGS_MODULE"] = "paperbidding.settings"
 import django
@@ -10,7 +14,10 @@ from pathlib import Path
 import argparse
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('abstracts_file', type=Path, help='File containing the CM abstracts for this year')
+parser.add_argument('abstracts_file', type=Path,
+                    help='File containing the CM abstracts plus emails for this year (the one from ICA)')
+parser.add_argument('website_abstracts_file', type=Path,
+                    help='File containing the CM abstracts plus keywords for this year (the one you can download)')
 parser.add_argument('volunteers_file', type=Path, help='File containing the CM volunteers for this year')
 args = parser.parse_args()
 
@@ -68,3 +75,18 @@ with args.abstracts_file.open() as f:
                 a.first_author = True
                 a.save()
 print(f"** Imported {n_new_papers} new papers ({len(lines)} in total) and created {n_authors} new authors that did not volunteer")
+
+n = 0
+with args.website_abstracts_file.open() as f:
+    lines = list(csv.DictReader(f))
+    for line in lines:
+        id = int(line['\ufeffControl ID'])
+        paper = Paper.objects.get(pk=id)
+        if paper.type:
+            continue
+        paper.type = line['Presentation Type']
+        paper.keywords = "; ".join([line['Primary Keyword'], line['Keywords']])
+        paper.student = line['Is this a student paper?']
+        paper.save()
+        n += 1
+print(f"** Added type and keyword information on {n} papers")
